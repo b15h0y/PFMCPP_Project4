@@ -405,9 +405,11 @@ IntType& IntType::divide( int val )
     if(val == 0)
     {
         std::cout << "error: integer division by zero is an error and will crash the program!" << "\n";
-        return *this;
     }
-    *pt /= val;
+    else
+    {
+        *pt /= val;
+    }
     return *this;
 }
 
