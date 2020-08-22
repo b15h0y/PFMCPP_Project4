@@ -55,21 +55,16 @@ struct FloatType;
 
 struct Point
 {
-    Point(IntType&, int);
-    Point(DoubleType&, double);
-    Point(FloatType&, float);
+    Point(int, int);
+    Point(double, double);
+    Point(float, float);
 
-    Point& multiply(IntType&);
-    Point& multiply(DoubleType&);
-    Point& multiply(FloatType&);
+    
     void toString() const;
 
-    Point& multiply(float m)
-    {
-        x *= m;
-        y *= m;
-        return *this;
-    }
+    Point& multiply(float);
+    Point& multiply(int);
+    Point& multiply(double);
 
  
 private:
@@ -202,12 +197,11 @@ struct FloatType
 {
 private:
     float* pt;
+
+public:  
     friend struct IntType;
     friend struct DoubleType;
-    friend struct Point;
     FloatType& powInternal(float);
-
-public:    
     FloatType(float fl):pt(new float(fl))
     {
     }
@@ -234,12 +228,11 @@ struct DoubleType
 {
 private:
     double* pt;
+ 
+public: 
     friend struct IntType;
     friend struct FloatType;
-    friend struct Point;
     DoubleType& powInternal(double);
-
-public:    
     DoubleType(double dbl):pt(new double(dbl))
     {
     }
@@ -267,12 +260,12 @@ struct IntType
 {
 private:    
     int* pt;
+  
+public: 
     friend struct FloatType;
     friend struct DoubleType;
-    friend struct Point;
     IntType& powInternal(int);
 
-public:    
     IntType(int val):pt(new int(val))
     {
     }
@@ -510,44 +503,47 @@ IntType& IntType::powInternal( int inp )
     return *this;
 }
 
-Point::Point(IntType& intType, int it)
+Point::Point(int X, int Y) :
+x {static_cast<float> (X)},
+y {static_cast<float> (Y)}
 {
-    this->x = static_cast<float> ( *(intType.pt) );
-    this->y = static_cast<float> (it);
 
 }
-Point::Point(DoubleType& dblType, double db)
-{
-    this->x = static_cast<float> (*(dblType.pt));
-    this->y = static_cast<float> (db);
-}
-Point::Point(FloatType& fltType, float fl)
-{
-    this->x = *(fltType.pt);
-    this->y = fl;
-}
 
-Point& Point::multiply(IntType& intType)
+Point::Point(double X, double Y) : 
+x {static_cast<float> (X)},
+y {static_cast<float> (Y)}
 {
-    this->x *= static_cast<float> ( *(intType.pt) );
-    this->y *= static_cast<float> ( *(intType.pt) );
-    return *this;
-}
-
-Point& Point::multiply(DoubleType& dblType)
-{
-    this->x = static_cast<float> (*(dblType.pt));
-    this->y = static_cast<float> (*(dblType.pt));
-    return *this;
-
-}
     
-Point& Point::multiply(FloatType& fltType)
+}
+
+Point::Point(float X, float Y) :
+x {X},
+y {Y}
 {
-    this->x *= *(fltType.pt);
-    this->y *= *(fltType.pt);
+    
+}
+
+Point& Point::multiply(int inp)
+{
+    this->x *= static_cast<float> (inp);
+    this->y *= static_cast<float> (inp);
+    return *this;
+}
+
+Point& Point::multiply(double inp)
+{
+    this->x = static_cast<float> (inp);
+    this->y = static_cast<float> (inp);
     return *this;
 
+}
+
+Point& Point::multiply(float m)
+{
+    this->x *= m;
+    this->y *= m;
+    return *this;
 }
 
 void Point::toString() const
