@@ -533,8 +533,8 @@ Point& Point::multiply(int inp)
 
 Point& Point::multiply(double inp)
 {
-    this->x = static_cast<float> (inp);
-    this->y = static_cast<float> (inp);
+    this->x *= static_cast<float> (inp);
+    this->y *= static_cast<float> (inp);
     return *this;
 
 }
