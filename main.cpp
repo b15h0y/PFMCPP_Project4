@@ -49,28 +49,6 @@ Project 4: Part 4 / 9
 #include <math.h>
 #include <iostream>
 
-struct IntType;
-struct DoubleType;
-struct FloatType;
-
-struct Point
-{
-    Point(int, int);
-    Point(double, double);
-    Point(float, float);
-
-    
-    void toString() const;
-
-    Point& multiply(float);
-    Point& multiply(int);
-    Point& multiply(double);
-
- 
-private:
-    float x{0}, y{0};
-};
-
 
 /*
 your program should generate the following output EXACTLY.
@@ -199,8 +177,7 @@ private:
     float* pt;
 
 public:  
-    friend struct IntType;
-    friend struct DoubleType;
+
     FloatType& powInternal(float);
     FloatType(float fl):pt(new float(fl))
     {
@@ -221,7 +198,7 @@ public:
     FloatType& subtract( float val );
     FloatType& multiply( float val );
     FloatType& divide( float val );
-    operator float() { return *pt; }
+    operator float() const { return *pt; }
 };
 
 struct DoubleType
@@ -230,8 +207,6 @@ private:
     double* pt;
  
 public: 
-    friend struct IntType;
-    friend struct FloatType;
     DoubleType& powInternal(double);
     DoubleType(double dbl):pt(new double(dbl))
     {
@@ -253,7 +228,7 @@ public:
     DoubleType& subtract( double val );
     DoubleType& multiply( double val );
     DoubleType& divide( double val );
-    operator double() { return *pt; }
+    operator double() const { return *pt; }
 };
 
 struct IntType
@@ -262,8 +237,6 @@ private:
     int* pt;
   
 public: 
-    friend struct FloatType;
-    friend struct DoubleType;
     IntType& powInternal(int);
 
     IntType(int val):pt(new int(val))
@@ -284,8 +257,38 @@ public:
     IntType& subtract( int val );
     IntType& multiply( int val );
     IntType& divide( int val );
-    operator int() { return *pt; }
+    operator int() const { return *pt; }
 };
+
+
+
+struct Point
+{
+    Point(const IntType&, const IntType&);
+    Point(const DoubleType&, const DoubleType&);
+    Point(const FloatType&, const FloatType&);
+
+    void toString() const;
+
+    Point& multiply(float m)
+    {
+        x *= m;
+        y *= m;
+        return *this;
+    }
+    Point& multiply(FloatType&);
+    Point& multiply(IntType&);
+    Point& multiply(DoubleType&);
+   
+ 
+private:
+    float x{0}, y{0};
+};
+
+
+//=======================================================
+//=======================================================
+
 
 FloatType& FloatType::add( float val )
 {
@@ -317,29 +320,23 @@ FloatType& FloatType::divide( float val )
 
 FloatType& FloatType::pow(const IntType& intInp)
 {
-    if (intInp.pt != nullptr)
-    {
-        return powInternal(static_cast<float> ( *(intInp.pt) ) );
-    }
-    return *this;
+    
+    return powInternal(static_cast<float> (intInp) );
+    
 }
 
 FloatType& FloatType::pow(const DoubleType& dblInp)
 {
-    if (dblInp.pt != nullptr)
-    {
-        return powInternal(static_cast<float> ( *(dblInp.pt) ) );
-    }
-    return *this;
+
+    return powInternal(static_cast<float> (dblInp) );
+  
 }
 
 FloatType& FloatType::pow(const FloatType& fltInp)
 {
-    if (fltInp.pt != nullptr)
-    {
-        return powInternal(*(fltInp.pt));
-    }
-    return *this;
+  
+    return powInternal(fltInp);
+    
 }
 
 FloatType& FloatType::pow(float inp)
@@ -390,29 +387,23 @@ DoubleType& DoubleType::divide( double val)
 
 DoubleType& DoubleType::pow(const IntType& intInp)
 {
-    if (intInp.pt != nullptr)
-    {
-        return powInternal(static_cast<double> ( *(intInp.pt) ) );
-    }
-    return *this;
+    
+    return powInternal(static_cast<double> (intInp) );
+   
 }
 
 DoubleType& DoubleType::pow(const DoubleType& dblInp)
 {
-    if (dblInp.pt != nullptr)
-    {
-        return powInternal(*(dblInp.pt));
-    }
-    return *this;
+   
+    return powInternal(dblInp);
+    
 }
 
 DoubleType& DoubleType::pow(const FloatType& fltInp)
 {
-    if (fltInp.pt != nullptr)
-    {
-        return powInternal(static_cast<double> ( *(fltInp.pt) ) );
-    }
-    return *this;
+   
+    return powInternal(static_cast<double> (fltInp) );
+    
 }
 
 DoubleType& DoubleType::pow(double inp)
@@ -464,29 +455,20 @@ IntType& IntType::divide( int val )
 
 IntType& IntType::pow(const IntType& intInp)
 {
-    if (intInp.pt != nullptr)
-    {
-        return powInternal(static_cast<int> (*(intInp.pt)) );
-    }
-    return *this;
+
+    return powInternal(static_cast<int> (intInp));
+   
 }
 
 IntType& IntType::pow(const DoubleType& dblInp)
 {
-    if (dblInp.pt != nullptr)
-    {
-        return powInternal(static_cast<int> ( *(dblInp.pt) ) );
-    }
-    return *this;
+    return powInternal(static_cast<int> ( dblInp ));
 }
 
 IntType& IntType::pow(const FloatType& fltInp)
 {
-    if (fltInp.pt != nullptr)
-    {
-        return powInternal(static_cast<int> ( *(fltInp.pt) ) );
-    }
-    return *this;
+    return powInternal(static_cast<int> (fltInp) );
+ 
 }
 
 IntType& IntType::pow(int inp)
@@ -503,52 +485,50 @@ IntType& IntType::powInternal( int inp )
     return *this;
 }
 
-Point::Point(int X, int Y) :
+
+Point::Point(const FloatType& X, const FloatType& Y) : 
+x (X),
+y (Y)
+{
+    
+}
+
+Point::Point(const IntType& X, const IntType& Y) :
 x {static_cast<float> (X)},
 y {static_cast<float> (Y)}
 {
 
 }
 
-Point::Point(double X, double Y) : 
-x {static_cast<float> (X)},
-y {static_cast<float> (Y)}
+Point::Point(const DoubleType& X, const DoubleType& Y) :
+x {static_cast<float>(X)},
+y {static_cast<float>(Y)}
 {
     
 }
 
-Point::Point(float X, float Y) :
-x {X},
-y {Y}
+Point& Point::multiply(IntType& inp)
 {
-    
-}
-
-Point& Point::multiply(int inp)
-{
-    this->x *= static_cast<float> (inp);
-    this->y *= static_cast<float> (inp);
-    return *this;
-}
-
-Point& Point::multiply(double inp)
-{
-    this->x *= static_cast<float> (inp);
-    this->y *= static_cast<float> (inp);
-    return *this;
+    return multiply(static_cast<float> (inp)); 
 
 }
 
-Point& Point::multiply(float m)
+Point& Point::multiply(DoubleType& inp)
 {
-    this->x *= m;
-    this->y *= m;
-    return *this;
+    return multiply(static_cast<float> (inp)); 
 }
+
+
+Point& Point::multiply(FloatType& inp)
+{
+    return multiply(static_cast<float> (inp));
+}
+
+
 
 void Point::toString() const
 {
-    std::cout<< "Point { x: " << std::to_string(static_cast<int> (this->x)) << ", " << "y: " << std::to_string (static_cast<int> (this->y)) <<" }" << std::endl;
+    std::cout<< "Point { x: " << std::to_string(static_cast<int> (x)) << ", " << "y: " << std::to_string (static_cast<int> (this->y)) <<" }" << std::endl;
 }
 
 //=======================================================
