@@ -517,7 +517,7 @@ Point::Point(const DoubleType& x_, const DoubleType& y_) : Point(static_cast<flo
 
 void Point::toString() const
 {
-    std::cout<< "Point { x: " << std::to_string(static_cast<int> (x)) << ", " << "y: " << std::to_string (static_cast<int> (this->y)) <<" }" << std::endl;
+    std::cout<< "Point { x: " << x << ", " << "y: " << y <<" }" << std::endl;
 }
 
 //=======================================================
