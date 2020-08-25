@@ -1,59 +1,68 @@
-/*
-Project 4: Part 4 / 9
- Chapter 4 Part 7
- Function/Constructor Overloading
 
- Create a branch named Part4
- 
- Do not delete your previous main. you will be adding to it.
+#include <iostream>
+/*
+Project 4: Part 5 / 9
+ video: Chapter 5 Part 2
+ Operator Overloading.
+
+Do not delete your previous main. 
+
+ Create a branch named Part5
 
     Build/Run often with this task to make sure you're not breaking the code with each step.
     I recommend committing after you get each step working so you can revert to a working version easily if needed.
  
- 1) add pow() functions, and a powInternal() function to each of your UDTs
-     a) your pow() functions should call powInternal()
-     b) add a pow() whose argument type is the primitive your UDT owns.  the argument should be passed by copy.
-     c) for each UDT in the file, your class should have pow() overloads that take that UDT as the function argument.
-         the argument should be passed as const ref
-         i.e. if you had UDTs named IntType, FloatType, DoubleType
-             in your IntType class, you'd have:
-                 pow(const IntType&),
-                 pow(const FloatType&),
-                 pow(const DoubleType&),
-                 and pow(int)
-     d) be sure to remember the rules about what member functions can be called on const objects.
-             (const objects can only call their const member functions)
-     e) the pow() functions should be chainable.
+ 1) replace the add/subtract/multiply/etc functions with overloaded math operators 
+        e.g. add() would become operator+=() because it modifies the internal heap-allocated object.
+        The easiest way to do this is to just rename your member functions.  Don't delete them and add new ones.
  
- 2) your powInternal() function should do something like this in its body:    *val = std::pow( *val, arg );
-         where 'arg' is the passed-in type, converted to whatever type your object is holding.
-             if your UDT owns an int, then arg would be an int.
-             if your UDT owns a float, then arg would be a float.
-         std::pow's documentation is found here: https://en.cppreference.com/w/cpp/numeric/math/pow so be sure to include
-             the proper header file listed there.
-         powInternal() should be chainable.
+ 2) Your overloaded operators should only take primitives, passed by value.
+    since they are passed by value, they do not need to be const.
  
- 3) modify the Point class below to have Constructors that accept your UDTs.
-     a) make the Constructor's UDT arguments initialize the Point class's two member variables.
-     b) overload the multiply() function so it can accept each of your UDTs.  I've added an implementation you can mimick for this function.
-     c) add a toString() function to the Point class that prints out the x and y members via std::cout.
+ 3) don't delete your conversion functions.
  
- 4) insert part4(); at the end of main, before the 'good to go'
- 
- 
- 5) make sure it compiles without errors.
- 
- You will need to use Forward Declaration and out-of-class definitions to complete this.
+ 4) your main() function should be the same as Project 4 part 4, 
+    excluding the changes made due to 1)
+     
+ 5) delete the example below after it makes sense how your code will change due to 1).
  */
 
-#include <math.h>
-#include <iostream>
+namespace Example
+{
+    int main()
+    {
+        FloatType floatNum(4.3f);
+        IntType intNum(2);
+        IntType intNum2(6);
 
+        /* 
+        if you previously had a line like this demonstrating chaining:
+            
+            intNum.add(3).add(4.5f).divide(floatNum); 
+
+        it should become:
+        */
+        intNum += 3;
+        intNum += 4.5f;
+        intNum /= floatNum;
+        std::cout << "intNum: " << intNum << std::endl;
+        
+        return 0;
+    }
+}
+
+ /*
+ 6) compile/link/run to make sure you don't have any errors or warnings.
+
+ 7) your program should produce the exact same output as Project 4 part 4, listed below.
+    use https://www.diffchecker.com/diff to make sure it is the same.
+ */
 
 /*
 your program should generate the following output EXACTLY.
-This includes the warnings.  
- The output should have zero warnings.
+This includes any warnings included below.  
+
+The output should have zero warnings.
 
 
 FloatType add result=4
@@ -150,6 +159,7 @@ good to go!
 Use a service like https://www.diffchecker.com/diff to compare your output. 
 */
 
+
 struct A {};
 //=========================================
 struct HeapA
@@ -173,13 +183,7 @@ struct DoubleType;
 
 struct FloatType
 {
-private:
-    float* pt;
-
-public:  
-
-    FloatType& powInternal(float);
-    FloatType(float fl):pt(new float(fl))
+    FloatType(float fl) : pt(new float(fl))
     {
     }
     ~FloatType()
@@ -199,16 +203,14 @@ public:
     FloatType& multiply( float val );
     FloatType& divide( float val );
     operator float() const { return *pt; }
+private:
+    float* pt;
+    FloatType& powInternal(float);
 };
 
 struct DoubleType
 {
-private:
-    double* pt;
- 
-public: 
-    DoubleType& powInternal(double);
-    DoubleType(double dbl):pt(new double(dbl))
+    DoubleType(double dbl) : pt(new double(dbl))
     {
     }
     ~DoubleType()
@@ -229,17 +231,14 @@ public:
     DoubleType& multiply( double val );
     DoubleType& divide( double val );
     operator double() const { return *pt; }
+private:
+    double* pt;
+    DoubleType& powInternal(double);
 };
 
 struct IntType
 {
-private:    
-    int* pt;
-  
-public: 
-    IntType& powInternal(int);
-
-    IntType(int val):pt(new int(val))
+    IntType(int val) : pt(new int(val))
     {
     }
     ~IntType()
@@ -258,6 +257,9 @@ public:
     IntType& multiply( int val );
     IntType& divide( int val );
     operator int() const { return *pt; }
+private:
+    int* pt;
+    IntType& powInternal(int);
 };
 
 
@@ -268,11 +270,6 @@ struct Point
     Point(const FloatType& _x, const FloatType& _y);
     Point(const IntType& _x, const IntType& _y);
     Point(const DoubleType& _x, const DoubleType& _y); 
-
-
-    // Point(const IntType&, const IntType&);
-    // Point(const DoubleType&, const DoubleType&);
-    // Point(const FloatType&, const FloatType&);
 
     void toString() const;
 
@@ -285,8 +282,6 @@ struct Point
     Point& multiply(FloatType&);
     Point& multiply(IntType&);
     Point& multiply(DoubleType&);
-   
- 
 private:
     float x{0}, y{0};
 };
@@ -352,7 +347,7 @@ FloatType& FloatType::pow(float inp)
 
 FloatType& FloatType::powInternal( float inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = std::pow(*pt, inp);
     }
@@ -419,7 +414,7 @@ DoubleType& DoubleType::pow(double inp)
 
 DoubleType& DoubleType::powInternal( double inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = std::pow(*pt, inp);
     }
@@ -484,7 +479,7 @@ IntType& IntType::pow(int inp)
 
 IntType& IntType::powInternal( int inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = static_cast<int> (std::pow( static_cast<double>(*pt) , static_cast<double>(inp) ));
     }
@@ -698,43 +693,3 @@ int main()
 
     return 0;
 }
-
-/*
-your program should generate the following output.  
-Use a service like https://www.diffchecker.com/diff to compare your output. 
-you should have no errors or warnings.
-
-
-clang++ -std=c++17 -Weverything -Wno-c++98-compat -Wno-missing-prototypes main.cpp && ./a.out
-result of ft.add(): 555.556
-result of ft.subtract(): -308.644
-result of ft.multiply(): 53345.3
-result of ft.divide(): 0.285712
-result of ft.add(): 4444.56
-result of ft.subtract(): 4444.56
-result of ft.multiply(): 0
-result of ft.divide(): 
-warning, floating point division by zero returns 'inf' !
-inf
-result of db.add(): 555.556
-result of db.subtract(): -308.644
-result of db.multiply(): 53345.3
-result of db.divide(): 0.285712
-result of db.add(): 123.456
-result of db.subtract(): 123.456
-result of db.multiply(): 0
-result of db.divide(): 
-warning, floating point division by zero returns 'inf' !
-inf
-result of i.add(): 30
-result of i.subtract(): -10
-result of i.multiply(): 200
-result of i.divide(): 0
-result of i.add(): 10
-result of i.subtract(): 10
-result of i.multiply(): 0
-result of i.divide(): error, integer division by zero will crash the program!
-returning lhs
-10
-good to go!
-*/
