@@ -161,7 +161,7 @@ struct DoubleType;
 
 struct FloatType
 {  
-    FloatType(float fl):pt(new float(fl))
+    FloatType(float fl) : pt(new float(fl))
     {
     }
     ~FloatType()
@@ -190,7 +190,7 @@ private:
 
 struct DoubleType
 {
-    DoubleType(double dbl):pt(new double(dbl))
+    DoubleType(double dbl) : pt(new double(dbl))
     {
     }
     ~DoubleType()
@@ -219,7 +219,7 @@ private:
 
 struct IntType
 {
-    IntType(int val):pt(new int(val))
+    IntType(int val) : pt(new int(val))
     {
     }
     ~IntType()
@@ -353,7 +353,7 @@ DoubleType& DoubleType::operator-=( double val )
     return *this;
 }
 
-DoubleType& DoubleType:: operator*=( double val )
+DoubleType& DoubleType::operator*=( double val )
 {
     *pt *= val;
     return*this;
