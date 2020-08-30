@@ -194,11 +194,6 @@ struct DoubleType;
 
 struct FloatType
 {
-private:
-    float* pt;
-
-public:  
-
     FloatType& powInternal(float);
     FloatType(float fl):pt(new float(fl))
     {
@@ -213,7 +208,7 @@ public:
     FloatType& pow(const FloatType&);
     FloatType& pow(const DoubleType&);
     FloatType& pow(float);
-    FloatType& apply(std::function<FloatType& (float&)> func = nullptr )
+    FloatType& apply(std::function<FloatType& (float&)> func )
     {
         if (func != nullptr)
         {
@@ -238,14 +233,13 @@ public:
     FloatType& operator *=( float val );
     FloatType& operator /=( float val );
     operator float() const { return *pt; }
+private:
+    float* pt;
 };
 
 struct DoubleType
 {
-private:
-    double* pt;
  
-public: 
     DoubleType& powInternal(double);
     DoubleType(double dbl):pt(new double(dbl))
     {
@@ -261,7 +255,7 @@ public:
     DoubleType& pow(const FloatType&);
     DoubleType& pow(const DoubleType&);
     DoubleType& pow(double);
-    DoubleType& apply(std::function<DoubleType& (double&)> func = nullptr )
+    DoubleType& apply(std::function<DoubleType& (double&)> func )
     {
         if (func != nullptr)
         {
@@ -285,14 +279,13 @@ public:
     DoubleType& operator *=( double val );
     DoubleType& operator /=( double val );
     operator double() const { return *pt; }
+private:
+    double* pt; 
 };
 
 struct IntType
 {
-private:    
-    int* pt;
-  
-public: 
+
     IntType& powInternal(int);
 
     IntType(int val):pt(new int(val))
@@ -308,7 +301,7 @@ public:
     IntType& pow(const FloatType&);
     IntType& pow(const DoubleType&);
     IntType& pow(int);
-    IntType& apply(std::function<IntType& (int&)> func = nullptr )
+    IntType& apply(std::function<IntType& (int&)> func )
     {
         if (func != nullptr)
         {
@@ -332,6 +325,9 @@ public:
     IntType& operator *=( int val );
     IntType& operator /=( int val );
     operator int() const { return *pt; }
+private:    
+    int* pt;
+  
 };
 
 
@@ -342,11 +338,6 @@ struct Point
     Point(const FloatType& _x, const FloatType& _y);
     Point(const IntType& _x, const IntType& _y);
     Point(const DoubleType& _x, const DoubleType& _y); 
-
-
-    // Point(const IntType&, const IntType&);
-    // Point(const DoubleType&, const DoubleType&);
-    // Point(const FloatType&, const FloatType&);
 
     void toString() const;
 
@@ -426,7 +417,7 @@ FloatType& FloatType::pow(float inp)
 
 FloatType& FloatType::powInternal( float inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = std::pow(*pt, inp);
     }
@@ -449,7 +440,7 @@ DoubleType& DoubleType::operator-=( double val )
     return *this;
 }
 
-DoubleType& DoubleType:: operator*=( double val )
+DoubleType& DoubleType::operator*=( double val )
 {
     *pt *= val;
     return*this;
@@ -493,7 +484,7 @@ DoubleType& DoubleType::pow(double inp)
 
 DoubleType& DoubleType::powInternal( double inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = std::pow(*pt, inp);
     }
@@ -558,7 +549,7 @@ IntType& IntType::pow(int inp)
 
 IntType& IntType::powInternal( int inp )
 {
-    if (this->pt != nullptr)
+    if (pt != nullptr)
     {
         *pt = static_cast<int> (std::pow( static_cast<double>(*pt) , static_cast<double>(inp) ));
     }
