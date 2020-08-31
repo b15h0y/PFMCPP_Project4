@@ -194,7 +194,6 @@ struct DoubleType;
 
 struct FloatType
 {
-    FloatType& powInternal(float);
     FloatType(float fl):pt(new float(fl))
     {
     }
@@ -235,12 +234,13 @@ struct FloatType
     operator float() const { return *pt; }
 private:
     float* pt;
+    FloatType& powInternal(float);
+
 };
 
 struct DoubleType
 {
  
-    DoubleType& powInternal(double);
     DoubleType(double dbl):pt(new double(dbl))
     {
     }
@@ -281,13 +281,11 @@ struct DoubleType
     operator double() const { return *pt; }
 private:
     double* pt; 
+    DoubleType& powInternal(double);
 };
 
 struct IntType
 {
-
-    IntType& powInternal(int);
-
     IntType(int val):pt(new int(val))
     {
     }
@@ -327,7 +325,8 @@ struct IntType
     operator int() const { return *pt; }
 private:    
     int* pt;
-  
+    IntType& powInternal(int);
+
 };
 
 
