@@ -233,7 +233,7 @@ struct Numeric
 
     Numeric& pow(const T& inp)
     {
-        return powInternal(static_cast<T>(inp));
+        return powInternal(inp);
     }
 
     Numeric& apply(std::function<Numeric&(std::unique_ptr<T>&)> func)
@@ -290,7 +290,7 @@ struct Numeric
         }
         else if (val < std::numeric_limits<T>::epsilon())
         {
-            std::cout << "warning: floating point division by zero!" <<std::endl;           
+            std::cout << "warning: floating point division by zero!" <<std::endl;
         }
         *pt /= val;
         return *this;   
@@ -614,7 +614,7 @@ void part7()
 
     {
         using CurrentType = decltype(ft3);
-        ft3.apply( [&ft3](std::unique_ptr<CurrentType::T>& val)->CurrentType& 
+        ft3.apply( [&ft3](std::unique_ptr<CurrentType::T>& val) -> CurrentType& 
         {
             *val += 7.0f;
             return ft3;
@@ -633,7 +633,7 @@ void part7()
 
     {
         using CurrentType = decltype(dt3);
-        dt3.apply( [&dt3](std::unique_ptr<CurrentType::T>& val)->CurrentType&
+        dt3.apply( [&dt3](std::unique_ptr<CurrentType::T>& val) -> CurrentType&
         {
             *val += 6.0;
             return dt3;
@@ -652,7 +652,7 @@ void part7()
 
     {
         using CurrentType = decltype(it3);
-        it3.apply( [&it3](std::unique_ptr<CurrentType::T>& val)->CurrentType&
+        it3.apply( [&it3](std::unique_ptr<CurrentType::T>& val) -> CurrentType&
         {
             *val += 5;
             return it3;
@@ -734,14 +734,12 @@ int main()
     // Intercept division by 0
     // --------
     std::cout << "Intercept division by 0 " << std::endl;
-    it /= 0;
-    ft /= 0;
-    dt /= 0;
-    std::cout << "New value of it = it / 0 = " << it << std::endl;
-    std::cout << "New value of ft = ft / 0 = " << ft << std::endl;
-    std::cout << "New value of dt = dt / 0 = " << dt << std::endl;
+    
+    std::cout << "New value of it = it / 0 = " << (it/=0) << std::endl;
+    std::cout << "New value of ft = ft / 0 = " << (ft/=0) << std::endl;
+    std::cout << "New value of dt = dt / 0 = " << (dt/=0) << std::endl;
 
-    std::cout << "---------------------\n" << std::endl; 
+    // std::cout << "---------------------\n" << std::endl; 
     part3();
     part4();
     // part6();
