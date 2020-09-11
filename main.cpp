@@ -270,7 +270,8 @@ struct Numeric
         *pt *= val;
         return *this;
     }
-    Numeric& operator /=( T val )
+    template<typename DivType>
+    Numeric& operator /=( DivType val )
     {
         if constexpr (std::is_same<T, int>::value)
         {
@@ -282,13 +283,13 @@ struct Numeric
                     return *this;
                 }
             }
-            else if (val < std::numeric_limits<T>::epsilon())
+            else if (val < std::numeric_limits<DivType>::epsilon())
             {
                 std::cout << "can't divide integers by zero!" <<std::endl;
                 return *this;   
             }    
         }
-        else if (val < std::numeric_limits<T>::epsilon())
+        else if (val < std::numeric_limits<DivType>::epsilon())
         {
             std::cout << "warning: floating point division by zero!" <<std::endl;
         }
