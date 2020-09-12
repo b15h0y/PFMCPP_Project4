@@ -275,7 +275,7 @@ struct Numeric
     {
         if constexpr (std::is_same<T, int>::value)
         {
-            if constexpr (std::is_same<decltype(val), int>::value)
+            if constexpr (std::is_same<DivType, int>::value)
             {
                 if (val == 0)
                 {
