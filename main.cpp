@@ -289,7 +289,7 @@ struct Numeric
                 return *this;   
             }    
         }
-        else if (val < std::numeric_limits<DivType>::epsilon())
+        else if (val < std::numeric_limits<T>::epsilon())
         {
             std::cout << "warning: floating point division by zero!" <<std::endl;
         }
