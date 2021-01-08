@@ -11,7 +11,7 @@ Create a branch named Part9
  1) add the Leak Detector files from Project5
  
  2) add these macros after the JUCE_LEAK_DETECTOR macro :
- */
+
 
 #define JUCE_DECLARE_NON_COPYABLE(className) \
             className (const className&) = delete;\
@@ -20,7 +20,7 @@ Create a branch named Part9
 #define JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(className) \
             JUCE_DECLARE_NON_COPYABLE(className) \
             JUCE_LEAK_DETECTOR(className)
-
+ */
 /*
  3) add JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Temporary) to the end of the  Temporary<> struct
  
@@ -75,6 +75,7 @@ Use a service like https://www.diffchecker.com/diff to compare your output.
 #include <functional>
 #include <cmath>
 #include <memory>
+#include "LeakedObjectDetector.h"
 
 
 template<typename NumericType>
@@ -89,11 +90,26 @@ struct Temporary
      revise these conversion functions to read/write to 'v' here
      hint: what qualifier do read-only functions usually have?
      */
+
+    ~Temporary() = default;
+
+    Temporary(Temporary&& o) : v( std::move(o.v) ) {}
+
+    Temporary& operator=(Temporary&& o)
+    {
+        v = std::move(o.v);
+        return *this;
+    }
+
+
     operator NumericType() const { return v; }
     operator NumericType&() { return v; }
+
 private:
     static int counter;
     NumericType v;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Temporary)
 };
 
 
@@ -125,14 +141,25 @@ template<typename Type>
 struct Numeric
 {
     using T = Temporary<Type>;
-    Numeric(T num) : pt(std::make_unique<T>(num))
+
+    Numeric(Type a) : pt( std::make_unique<T>(a) )
     {
 
     }
-    ~Numeric()
+
+    ~Numeric() = default;
+
+    Numeric(Numeric&& other)
     {
-        pt = nullptr;
+        pt = std::move(other.v);
     }
+
+    Numeric& operator=(Numeric&& other)
+    {
+        pt = std::move(other.v);
+        return *this;
+    }
+
 
     operator Type() const { return *pt; }
     operator Type&() { return *pt; }
@@ -204,8 +231,13 @@ struct Numeric
         return *this;   
     }
     operator T() const { return *pt; }
+
+
+
+
 private:
     std::unique_ptr<T> pt;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Numeric)
 };
 
 template<typename T>
@@ -358,6 +390,7 @@ int main()
         i.apply( cube<Type> );
         std::cout << "i cubed: " << i << std::endl;
     }
+    
 }
 
 
